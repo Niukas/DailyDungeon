@@ -2,7 +2,7 @@
 
 > Tus tareas de la vida real son las misiones de tu héroe.
 
-**DailyDungeon** es un juego de rol de escritorio que convierte tus tareas en una aventura. Cargás tus pendientes como misiones, y cumplirlas hace crecer a tu personaje. No hacerlas, en cambio, lo debilita.
+**DailyDungeon** es un juego de rol de escritorio que convierte tus tareas en una aventura. Cargás tus pendientes como misiones, y cumplirlas hace crecer a tu personaje. Dejarlas vencer, en cambio, lo debilita.
 
 Está inspirado en Habitica, pero sin hábitos: acá cada tarea es única y el foco está en el héroe y su aventura.
 
@@ -10,13 +10,13 @@ Está inspirado en Habitica, pero sin hábitos: acá cada tarea es única y el f
 
 ## Cómo se juega
 
-1. **Elegís tu clase** y le ponés nombre a tu héroe.
+1. **Te registrás** con usuario y contraseña (guardada cifrada, nunca en texto plano), **elegís tu clase** y le ponés nombre a tu héroe. Cada usuario tiene su propio héroe y sus propios tableros.
 2. **Creás un tablero** para cada ámbito de tu vida: "Facultad", "Casa", "Proyecto final"...
 3. **Cargás misiones** con título, descripción, fecha límite, dificultad y prioridad.
 4. **Avanzás cada misión por tres etapas**, que son pantallas completas por las que te movés con botones:
 
    | Etapa | Significado |
-      |-------|-------------|
+   |-------|-------------|
    | 📜 Tablón de misiones | Lo que todavía no empezaste |
    | 🗡️ En aventura | Lo que estás haciendo ahora |
    | 🏆 Gloria | Lo que ya cumpliste |
