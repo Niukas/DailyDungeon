@@ -3,6 +3,10 @@
     -fx-padding: 20;
 }
 
+.formulario {
+    -fx-padding: 10;
+}
+
 .titulo {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
