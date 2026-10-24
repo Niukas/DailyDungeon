@@ -19,3 +19,5 @@ build/
 
 ### DailyDungeon ###
 db.properties
+CLAUDE.md
+.claude/
