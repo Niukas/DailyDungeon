@@ -1,9 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" spacing="10.0" xmlns:fx="http://javafx.com/fxml">
-    <Label text="Tus tableros" styleClass="titulo"/>
-    <Label text="Próximamente."/>
-</VBox>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="niuka.dailydungeon.presentacion.controlador.ControladorTableros">
+    <left>
+        <VBox styleClass="panel-heroe" spacing="6.0" prefWidth="220.0">
+            <Label fx:id="etiquetaNombre" styleClass="titulo"/>
+            <Label fx:id="etiquetaClase"/>
+            <Label fx:id="etiquetaNivel"/>
+            <Label fx:id="etiquetaXp"/>
+            <Label fx:id="etiquetaVida"/>
+            <Label text="Atributos" styleClass="subtitulo"/>
+            <VBox fx:id="cajaAtributos" spacing="4.0"/>
+            <Region VBox.vgrow="ALWAYS"/>
+            <Button text="Cerrar sesión" onAction="#cerrarSesion"/>
+        </VBox>
+    </left>
+    <center>
+        <VBox styleClass="contenido" spacing="8.0">
+            <Label text="Tus tableros" styleClass="titulo"/>
+            <ListView fx:id="listaTableros" VBox.vgrow="ALWAYS"/>
+            <HBox spacing="8.0">
+                <Button text="Nuevo" onAction="#crearTablero"/>
+                <Button text="Renombrar" onAction="#renombrarTablero"/>
+                <Button text="Eliminar" onAction="#eliminarTablero"/>
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

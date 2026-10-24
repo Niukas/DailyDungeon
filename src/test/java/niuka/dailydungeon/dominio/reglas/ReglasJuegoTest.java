@@ -11,4 +11,10 @@ class ReglasJuegoTest {
         assertEquals(100, ReglasJuego.vidaMaxima(5));
         assertEquals(50, ReglasJuego.vidaMaxima(0));
     }
+
+    @Test
+    void xpParaSubirEsCienPorNivel() {
+        assertEquals(100, ReglasJuego.xpParaSubir(1));
+        assertEquals(300, ReglasJuego.xpParaSubir(3));
+    }
 }

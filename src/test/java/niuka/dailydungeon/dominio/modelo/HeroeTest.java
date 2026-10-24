@@ -12,6 +12,7 @@ class HeroeTest {
 
         assertEquals(1, heroe.nivel());
         assertEquals(0, heroe.xp());
+        assertEquals(100, heroe.xpParaSubirDeNivel());
     }
 
     @Test

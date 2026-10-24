@@ -10,6 +10,10 @@ public class Sesion {
         this.usuarioActual = usuario;
     }
 
+    public void cerrar() {
+        this.usuarioActual = null;
+    }
+
     public Usuario usuarioActual() {
         return usuarioActual;
     }

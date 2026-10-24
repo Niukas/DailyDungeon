@@ -29,6 +29,11 @@ public class ServicioHeroe {
         return repositorioHeroe.existeParaUsuario(idUsuario);
     }
 
+    public Heroe obtenerHeroe(int idUsuario) {
+        return repositorioHeroe.buscarPorUsuario(idUsuario)
+                .orElseThrow(() -> new ExcepcionNegocio("Todavía no creaste tu héroe."));
+    }
+
     public Heroe crearHeroe(int idUsuario, String nombre, Clase clase) {
         String nombreLimpio = nombre == null ? "" : nombre.strip();
         validarNombre(nombreLimpio);

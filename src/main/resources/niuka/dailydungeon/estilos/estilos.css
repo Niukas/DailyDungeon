@@ -11,3 +11,17 @@
     -fx-font-size: 24px;
     -fx-font-weight: bold;
 }
+
+.subtitulo {
+    -fx-font-weight: bold;
+    -fx-padding: 10 0 0 0;
+}
+
+.panel-heroe {
+    -fx-padding: 0 20 0 0;
+    -fx-border-color: transparent #cccccc transparent transparent;
+}
+
+.contenido {
+    -fx-padding: 0 0 0 20;
+}

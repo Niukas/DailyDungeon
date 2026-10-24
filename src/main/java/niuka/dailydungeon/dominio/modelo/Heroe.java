@@ -42,6 +42,10 @@ public class Heroe {
         return ReglasJuego.vidaMaxima(valorDe(Atributo.VITALIDAD));
     }
 
+    public int xpParaSubirDeNivel() {
+        return ReglasJuego.xpParaSubir(nivel);
+    }
+
     public int valorDe(Atributo atributo) {
         return atributos.get(atributo);
     }

@@ -4,6 +4,7 @@ import niuka.dailydungeon.dominio.modelo.Heroe;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class RepositorioHeroeEnMemoria implements RepositorioHeroe {
 
@@ -11,7 +12,14 @@ public class RepositorioHeroeEnMemoria implements RepositorioHeroe {
 
     @Override
     public boolean existeParaUsuario(int idUsuario) {
-        return heroes.stream().anyMatch(heroe -> heroe.idUsuario() == idUsuario);
+        return buscarPorUsuario(idUsuario).isPresent();
+    }
+
+    @Override
+    public Optional<Heroe> buscarPorUsuario(int idUsuario) {
+        return heroes.stream()
+                .filter(heroe -> heroe.idUsuario() == idUsuario)
+                .findFirst();
     }
 
     @Override

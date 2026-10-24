@@ -1,7 +1,9 @@
 package niuka.dailydungeon.infraestructura.repositorio;
 
+import niuka.dailydungeon.aplicacion.repositorio.RepositorioClase;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioHeroe;
 import niuka.dailydungeon.dominio.modelo.Atributo;
+import niuka.dailydungeon.dominio.modelo.Clase;
 import niuka.dailydungeon.dominio.modelo.Heroe;
 import niuka.dailydungeon.infraestructura.bd.ConexionBD;
 
@@ -10,15 +12,50 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class RepositorioHeroeJDBC implements RepositorioHeroe {
 
     private static final String ERROR_BD = "Error al acceder a la tabla heroe";
 
     private final ConexionBD conexionBD;
+    private final RepositorioClase repositorioClase;
 
-    public RepositorioHeroeJDBC(ConexionBD conexionBD) {
+    public RepositorioHeroeJDBC(ConexionBD conexionBD, RepositorioClase repositorioClase) {
         this.conexionBD = conexionBD;
+        this.repositorioClase = repositorioClase;
+    }
+
+    @Override
+    public Optional<Heroe> buscarPorUsuario(int idUsuario) {
+        String sql = """
+                SELECT id_heroe, id_clase, nombre, nivel, xp, hp_actual
+                FROM heroe
+                WHERE id_usuario = ? AND eliminado = FALSE
+                """;
+        try (Connection conexion = conexionBD.obtenerConexion();
+             PreparedStatement consulta = conexion.prepareStatement(sql)) {
+            consulta.setInt(1, idUsuario);
+            try (ResultSet resultado = consulta.executeQuery()) {
+                if (!resultado.next()) {
+                    return Optional.empty();
+                }
+                int idHeroe = resultado.getInt("id_heroe");
+                return Optional.of(new Heroe(
+                        idHeroe,
+                        idUsuario,
+                        buscarClase(resultado.getInt("id_clase")),
+                        resultado.getString("nombre"),
+                        resultado.getInt("nivel"),
+                        resultado.getInt("xp"),
+                        resultado.getInt("hp_actual"),
+                        leerAtributos(conexion, idHeroe)));
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException(ERROR_BD, e);
+        }
     }
 
     @Override
@@ -69,6 +106,27 @@ public class RepositorioHeroeJDBC implements RepositorioHeroe {
                 return claves.getInt(1);
             }
         }
+    }
+
+    private Clase buscarClase(int idClase) {
+        return repositorioClase.listarTodas().stream()
+                .filter(clase -> clase.id() == idClase)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Clase desconocida: " + idClase));
+    }
+
+    private Map<Atributo, Integer> leerAtributos(Connection conexion, int idHeroe) throws SQLException {
+        String sql = "SELECT id_atributo, valor FROM heroe_atributo WHERE id_heroe = ?";
+        Map<Atributo, Integer> atributos = new EnumMap<>(Atributo.class);
+        try (PreparedStatement consulta = conexion.prepareStatement(sql)) {
+            consulta.setInt(1, idHeroe);
+            try (ResultSet resultado = consulta.executeQuery()) {
+                while (resultado.next()) {
+                    atributos.put(Atributo.desdeId(resultado.getInt("id_atributo")), resultado.getInt("valor"));
+                }
+            }
+        }
+        return atributos;
     }
 
     private void insertarAtributos(Connection conexion, int idHeroe, Heroe heroe) throws SQLException {

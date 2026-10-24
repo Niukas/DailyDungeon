@@ -4,19 +4,25 @@ import java.util.Arrays;
 
 public enum Atributo {
 
-    VITALIDAD(1),
-    SABIDURIA(2),
-    RESISTENCIA(3),
-    SUERTE(4);
+    VITALIDAD(1, "Vitalidad"),
+    SABIDURIA(2, "Sabiduría"),
+    RESISTENCIA(3, "Resistencia"),
+    SUERTE(4, "Suerte");
 
     private final int id;
+    private final String nombre;
 
-    Atributo(int id) {
+    Atributo(int id, String nombre) {
         this.id = id;
+        this.nombre = nombre;
     }
 
     public int id() {
         return id;
+    }
+
+    public String nombre() {
+        return nombre;
     }
 
     public static Atributo desdeId(int id) {

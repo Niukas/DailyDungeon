@@ -52,6 +52,18 @@ class ServicioHeroeTest {
     }
 
     @Test
+    void obtenerHeroeDevuelveElHeroeCreado() {
+        Heroe creado = servicio.crearHeroe(ID_USUARIO, "Arturo", guerrero);
+
+        assertEquals(creado.id(), servicio.obtenerHeroe(ID_USUARIO).id());
+    }
+
+    @Test
+    void obtenerHeroeSinHaberloCreadoFalla() {
+        assertThrows(ExcepcionNegocio.class, () -> servicio.obtenerHeroe(ID_USUARIO));
+    }
+
+    @Test
     void crearHeroeConNombreCortoFalla() {
         ExcepcionNegocio error = assertThrows(ExcepcionNegocio.class,
                 () -> servicio.crearHeroe(ID_USUARIO, "Al", guerrero));
