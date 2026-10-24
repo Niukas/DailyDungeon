@@ -1,6 +1,5 @@
 package niuka.dailydungeon.presentacion;
 
-import niuka.dailydungeon.dominio.modelo.EstadoMision;
 import niuka.dailydungeon.dominio.modelo.Mision;
 import niuka.dailydungeon.dominio.modelo.Tablero;
 import niuka.dailydungeon.dominio.modelo.Usuario;
@@ -12,7 +11,6 @@ public class Sesion {
 
     private Usuario usuarioActual;
     private Tablero tableroActual;
-    private EstadoMision etapaVisible = EstadoMision.TABLON;
     private Mision misionEnEdicion;
 
     public void iniciar(Usuario usuario) {
@@ -22,17 +20,11 @@ public class Sesion {
     public void cerrar() {
         usuarioActual = null;
         tableroActual = null;
-        etapaVisible = EstadoMision.TABLON;
         misionEnEdicion = null;
     }
 
     public void abrirTablero(Tablero tablero) {
         tableroActual = tablero;
-        etapaVisible = EstadoMision.TABLON;
-    }
-
-    public void verEtapa(EstadoMision etapa) {
-        etapaVisible = etapa;
     }
 
     public void prepararMisionNueva() {
@@ -49,10 +41,6 @@ public class Sesion {
 
     public Tablero tableroActual() {
         return tableroActual;
-    }
-
-    public EstadoMision etapaVisible() {
-        return etapaVisible;
     }
 
     // Vacío cuando el formulario es para una misión nueva.

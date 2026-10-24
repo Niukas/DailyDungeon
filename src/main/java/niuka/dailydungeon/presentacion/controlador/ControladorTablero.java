@@ -15,39 +15,41 @@ import niuka.dailydungeon.presentacion.Navegador;
 import niuka.dailydungeon.presentacion.Sesion;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ControladorTablero {
 
     private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private static final String ELEGI_UNA_MISION = "Elegí una misión de la lista.";
 
     private final ServicioMision servicioMision;
     private final Sesion sesion;
     private final Navegador navegador;
 
-    private List<Mision> misiones;
+    // La misión marcada en cualquiera de las tres columnas, o null si no hay ninguna.
+    private Mision misionElegida;
 
     @FXML
     private Label etiquetaTablero;
     @FXML
-    private Label etiquetaEtapa;
+    private Label etiquetaTablon;
     @FXML
-    private Label etiquetaContadores;
+    private Label etiquetaEnAventura;
     @FXML
-    private Button botonAnterior;
+    private Label etiquetaGloria;
     @FXML
-    private Button botonSiguiente;
+    private ListView<Mision> listaTablon;
     @FXML
-    private Button botonEditar;
+    private ListView<Mision> listaEnAventura;
+    @FXML
+    private ListView<Mision> listaGloria;
     @FXML
     private Button botonEmpezar;
     @FXML
     private Button botonVolverAlTablon;
     @FXML
-    private ListView<Mision> listaMisiones;
+    private Button botonEditar;
+    @FXML
+    private Button botonEliminar;
 
     public ControladorTablero(ServicioMision servicioMision, Sesion sesion, Navegador navegador) {
         this.servicioMision = servicioMision;
@@ -58,81 +60,94 @@ public class ControladorTablero {
     @FXML
     private void initialize() {
         etiquetaTablero.setText(sesion.tableroActual().nombre());
-        listaMisiones.setCellFactory(lista -> new ListCell<>() {
+        for (ListView<Mision> lista : listas()) {
+            prepararLista(lista);
+        }
+        actualizar();
+    }
+
+    private List<ListView<Mision>> listas() {
+        return List.of(listaTablon, listaEnAventura, listaGloria);
+    }
+
+    private void prepararLista(ListView<Mision> lista) {
+        lista.setCellFactory(vista -> new ListCell<>() {
             @Override
             protected void updateItem(Mision mision, boolean vacia) {
                 super.updateItem(mision, vacia);
                 setText(vacia || mision == null ? null : describir(mision));
             }
         });
-        actualizar();
+        lista.getSelectionModel().selectedItemProperty().addListener((propiedad, anterior, elegida) -> {
+            if (elegida != null) {
+                elegir(lista, elegida);
+            }
+        });
+    }
+
+    // Una sola misión elegida a la vez: al marcar una, se desmarcan las otras columnas.
+    private void elegir(ListView<Mision> listaElegida, Mision mision) {
+        for (ListView<Mision> lista : listas()) {
+            if (lista != listaElegida) {
+                lista.getSelectionModel().clearSelection();
+            }
+        }
+        misionElegida = mision;
+        actualizarBotones();
     }
 
     private void actualizar() {
-        misiones = servicioMision.listarMisiones(sesion.tableroActual().id());
-        EstadoMision etapa = sesion.etapaVisible();
-
-        listaMisiones.getItems().setAll(misionesEn(etapa));
-        etiquetaEtapa.setText("%s (%d)".formatted(etapa.nombre(), misionesEn(etapa).size()));
-        etiquetaContadores.setText(contadoresDeOtrasEtapas(etapa));
-
-        botonAnterior.setDisable(etapa.ordinal() == 0);
-        botonSiguiente.setDisable(etapa.ordinal() == EstadoMision.values().length - 1);
-        botonEditar.setDisable(etapa == EstadoMision.GLORIA);
-        mostrar(botonEmpezar, etapa == EstadoMision.TABLON);
-        mostrar(botonVolverAlTablon, etapa == EstadoMision.EN_AVENTURA);
+        List<Mision> misiones = servicioMision.listarMisiones(sesion.tableroActual().id());
+        mostrarEtapa(EstadoMision.TABLON, misiones, etiquetaTablon, listaTablon);
+        mostrarEtapa(EstadoMision.EN_AVENTURA, misiones, etiquetaEnAventura, listaEnAventura);
+        mostrarEtapa(EstadoMision.GLORIA, misiones, etiquetaGloria, listaGloria);
+        misionElegida = null;
+        actualizarBotones();
     }
 
-    private List<Mision> misionesEn(EstadoMision etapa) {
-        return misiones.stream()
+    private void mostrarEtapa(EstadoMision etapa, List<Mision> misiones, Label etiqueta, ListView<Mision> lista) {
+        List<Mision> deLaEtapa = misiones.stream()
                 .filter(mision -> mision.estado() == etapa)
                 .toList();
+        etiqueta.setText("%s (%d)".formatted(etapa.nombre(), deLaEtapa.size()));
+        lista.getItems().setAll(deLaEtapa);
     }
 
-    private String contadoresDeOtrasEtapas(EstadoMision etapaActual) {
-        return Arrays.stream(EstadoMision.values())
-                .filter(etapa -> etapa != etapaActual)
-                .map(etapa -> etapa.nombre() + ": " + misionesEn(etapa).size())
-                .collect(Collectors.joining("     "));
+    private void actualizarBotones() {
+        boolean hayElegida = misionElegida != null;
+        botonEmpezar.setDisable(!hayElegida || misionElegida.estado() != EstadoMision.TABLON);
+        botonVolverAlTablon.setDisable(!hayElegida || misionElegida.estado() != EstadoMision.EN_AVENTURA);
+        botonEditar.setDisable(!hayElegida || misionElegida.estaEnGloria());
+        botonEliminar.setDisable(!hayElegida);
     }
 
     private String describir(Mision mision) {
         DatosMision datos = mision.datos();
         String fecha = datos.fechaLimite() == null
-                ? "sin fecha"
-                : "vence " + datos.fechaLimite().format(FORMATO_FECHA);
-        return "%s  ·  %s  ·  Prioridad %s  ·  %s"
+                ? "Sin fecha"
+                : "Vence " + datos.fechaLimite().format(FORMATO_FECHA);
+        return "%s\n%s  ·  Prioridad %s\n%s"
                 .formatted(datos.titulo(), datos.dificultad(), datos.prioridad(), fecha);
     }
 
-    // Un botón oculto tampoco ocupa lugar en la fila.
-    private void mostrar(Button boton, boolean visible) {
-        boton.setVisible(visible);
-        boton.setManaged(visible);
-    }
-
-    private Mision misionElegida() {
-        Mision elegida = listaMisiones.getSelectionModel().getSelectedItem();
-        if (elegida == null) {
-            Alertas.mostrarError(ELEGI_UNA_MISION);
+    @FXML
+    private void empezarMision() {
+        try {
+            servicioMision.empezarMision(misionElegida);
+            actualizar();
+        } catch (ExcepcionNegocio e) {
+            Alertas.mostrarError(e.getMessage());
         }
-        return elegida;
     }
 
     @FXML
-    private void verEtapaAnterior() {
-        cambiarEtapa(-1);
-    }
-
-    @FXML
-    private void verEtapaSiguiente() {
-        cambiarEtapa(1);
-    }
-
-    private void cambiarEtapa(int desplazamiento) {
-        EstadoMision[] etapas = EstadoMision.values();
-        sesion.verEtapa(etapas[sesion.etapaVisible().ordinal() + desplazamiento]);
-        actualizar();
+    private void volverAlTablon() {
+        try {
+            servicioMision.volverAlTablon(misionElegida);
+            actualizar();
+        } catch (ExcepcionNegocio e) {
+            Alertas.mostrarError(e.getMessage());
+        }
     }
 
     @FXML
@@ -143,52 +158,16 @@ public class ControladorTablero {
 
     @FXML
     private void editarMision() {
-        Mision elegida = misionElegida();
-        if (elegida == null) {
-            return;
-        }
-        sesion.prepararEdicion(elegida);
+        sesion.prepararEdicion(misionElegida);
         navegador.irA("formulario-mision");
     }
 
     @FXML
     private void eliminarMision() {
-        Mision elegida = misionElegida();
-        if (elegida == null) {
-            return;
-        }
-        String pregunta = "¿Seguro que querés eliminar \"%s\"?".formatted(elegida.datos().titulo());
+        String pregunta = "¿Seguro que querés eliminar \"%s\"?".formatted(misionElegida.datos().titulo());
         if (Alertas.confirmar(pregunta)) {
-            servicioMision.eliminarMision(elegida);
+            servicioMision.eliminarMision(misionElegida);
             actualizar();
-        }
-    }
-
-    @FXML
-    private void empezarMision() {
-        Mision elegida = misionElegida();
-        if (elegida == null) {
-            return;
-        }
-        try {
-            servicioMision.empezarMision(elegida);
-            actualizar();
-        } catch (ExcepcionNegocio e) {
-            Alertas.mostrarError(e.getMessage());
-        }
-    }
-
-    @FXML
-    private void volverAlTablon() {
-        Mision elegida = misionElegida();
-        if (elegida == null) {
-            return;
-        }
-        try {
-            servicioMision.volverAlTablon(elegida);
-            actualizar();
-        } catch (ExcepcionNegocio e) {
-            Alertas.mostrarError(e.getMessage());
         }
     }
 

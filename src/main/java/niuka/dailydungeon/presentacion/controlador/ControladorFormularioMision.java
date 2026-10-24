@@ -10,7 +10,6 @@ import niuka.dailydungeon.aplicacion.servicio.ServicioMision;
 import niuka.dailydungeon.dominio.ExcepcionNegocio;
 import niuka.dailydungeon.dominio.modelo.DatosMision;
 import niuka.dailydungeon.dominio.modelo.Dificultad;
-import niuka.dailydungeon.dominio.modelo.EstadoMision;
 import niuka.dailydungeon.dominio.modelo.Mision;
 import niuka.dailydungeon.dominio.modelo.Prioridad;
 import niuka.dailydungeon.presentacion.Alertas;
@@ -82,8 +81,6 @@ public class ControladorFormularioMision {
                 servicioMision.editarMision(enEdicion.get(), datos);
             } else {
                 servicioMision.crearMision(sesion.tableroActual().id(), datos);
-                // Las misiones nuevas arrancan en el Tablón: se vuelve ahí para verla.
-                sesion.verEtapa(EstadoMision.TABLON);
             }
             navegador.irA("tablero");
         } catch (ExcepcionNegocio e) {

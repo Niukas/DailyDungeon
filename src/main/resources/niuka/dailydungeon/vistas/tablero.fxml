@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox spacing="10.0" xmlns:fx="http://javafx.com/fxml"
@@ -13,21 +12,30 @@
         <Button text="← Tableros" onAction="#volverATableros"/>
         <Label fx:id="etiquetaTablero" styleClass="titulo"/>
     </HBox>
-    <HBox spacing="10.0" alignment="CENTER">
-        <Button fx:id="botonAnterior" text="◀" onAction="#verEtapaAnterior"/>
-        <Label fx:id="etiquetaEtapa" styleClass="etapa"/>
-        <Button fx:id="botonSiguiente" text="▶" onAction="#verEtapaSiguiente"/>
+
+    <!-- Las tres columnas tienen el mismo ancho preferido, así el espacio se reparte igual. -->
+    <HBox spacing="10.0" VBox.vgrow="ALWAYS">
+        <VBox styleClass="columna" spacing="8.0" prefWidth="300.0" HBox.hgrow="ALWAYS">
+            <Label fx:id="etiquetaTablon" styleClass="etapa"/>
+            <ListView fx:id="listaTablon" VBox.vgrow="ALWAYS"/>
+            <Button fx:id="botonEmpezar" text="Mover a aventura →" maxWidth="Infinity"
+                    onAction="#empezarMision"/>
+        </VBox>
+        <VBox styleClass="columna" spacing="8.0" prefWidth="300.0" HBox.hgrow="ALWAYS">
+            <Label fx:id="etiquetaEnAventura" styleClass="etapa"/>
+            <ListView fx:id="listaEnAventura" VBox.vgrow="ALWAYS"/>
+            <Button fx:id="botonVolverAlTablon" text="← Volver al tablón" maxWidth="Infinity"
+                    onAction="#volverAlTablon"/>
+        </VBox>
+        <VBox styleClass="columna" spacing="8.0" prefWidth="300.0" HBox.hgrow="ALWAYS">
+            <Label fx:id="etiquetaGloria" styleClass="etapa"/>
+            <ListView fx:id="listaGloria" VBox.vgrow="ALWAYS"/>
+        </VBox>
     </HBox>
-    <HBox alignment="CENTER">
-        <Label fx:id="etiquetaContadores"/>
-    </HBox>
-    <ListView fx:id="listaMisiones" VBox.vgrow="ALWAYS"/>
+
     <HBox spacing="8.0">
         <Button text="Nueva misión" onAction="#nuevaMision"/>
         <Button fx:id="botonEditar" text="Editar" onAction="#editarMision"/>
-        <Button text="Eliminar" onAction="#eliminarMision"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Button fx:id="botonVolverAlTablon" text="← Volver al tablón" onAction="#volverAlTablon"/>
-        <Button fx:id="botonEmpezar" text="Empezar aventura →" onAction="#empezarMision"/>
+        <Button fx:id="botonEliminar" text="Eliminar" onAction="#eliminarMision"/>
     </HBox>
 </VBox>

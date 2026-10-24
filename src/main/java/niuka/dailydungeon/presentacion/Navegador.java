@@ -13,8 +13,8 @@ public class Navegador {
 
     private static final String RUTA_VISTAS = "/niuka/dailydungeon/vistas/";
     private static final String RUTA_ESTILOS = "/niuka/dailydungeon/estilos/estilos.css";
-    private static final double ANCHO = 900;
-    private static final double ALTO = 600;
+    private static final double ANCHO = 1000;
+    private static final double ALTO = 650;
 
     private final Stage ventana;
     // Permite que App cree cada controlador pasándole sus servicios por constructor.
