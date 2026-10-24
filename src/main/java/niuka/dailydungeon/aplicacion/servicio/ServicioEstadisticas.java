@@ -32,6 +32,8 @@ public class ServicioEstadisticas {
         Heroe heroe = repositorioHeroe.buscarPorUsuario(idUsuario)
                 .orElseThrow(() -> new ExcepcionNegocio("Todavía no creaste tu héroe."));
 
+        // Cada fila del historial es una misión completada: contar las filas da
+        // las completadas, y sumarlas da la XP total.
         List<Integer> xpPorMision = repositorioHistorial.listarXpPorHeroe(heroe.id());
         int xpTotal = xpPorMision.stream().mapToInt(xp -> xp).sum();
 
@@ -42,6 +44,7 @@ public class ServicioEstadisticas {
         return new Estadisticas(xpPorMision.size(), xpTotal, progreso);
     }
 
+    // Cuenta cuántas misiones del tablero están en Gloria sobre el total.
     private ProgresoTablero calcularProgreso(Tablero tablero) {
         List<Mision> misiones = repositorioMision.listarPorTablero(tablero.id());
         int completadas = (int) misiones.stream()

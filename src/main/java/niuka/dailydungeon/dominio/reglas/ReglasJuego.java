@@ -2,6 +2,8 @@ package niuka.dailydungeon.dominio.reglas;
 
 import java.util.random.RandomGenerator;
 
+// Acá están todos los números del juego juntos. Si quiero cambiar el balance
+// (por ejemplo, cuánto daño hace una misión vencida), lo cambio en un solo lugar.
 public final class ReglasJuego {
 
     public static final int NIVEL_INICIAL = 1;
@@ -26,7 +28,8 @@ public final class ReglasJuego {
         return XP_POR_NIVEL * nivel;
     }
 
-    // Se redondea una sola vez, al final, para no perder XP en los pasos intermedios.
+    // XP base + 2 % por cada punto de Sabiduría, y × 1,5 si fue crítico.
+    // Redondeo una sola vez al final para no ir perdiendo decimales.
     public static int xpGanada(int xpBase, int sabiduria, boolean critico) {
         double xp = xpBase * (1 + BONUS_XP_POR_SABIDURIA * sabiduria);
         if (critico) {
@@ -35,16 +38,19 @@ public final class ReglasJuego {
         return (int) Math.round(xp);
     }
 
+    // 2 % por punto de Suerte, pero con Math.min nunca pasa de 50 %.
     public static double probabilidadCritico(int suerte) {
         return Math.min(CRITICO_POR_SUERTE * suerte, CRITICO_MAXIMO);
     }
 
-    // División entera: con Resistencia 5, 5 / 2 = 2 y el daño es 8.
+    // Ojo: resistencia / 2 es división entera (5 / 2 = 2), entonces con Resistencia 5 el daño es 8.
+    // Con Math.max me aseguro de que el daño nunca sea menos de 1.
     public static int danioPorVencimiento(int resistencia) {
         return Math.max(DANIO_MINIMO, DANIO_BASE - resistencia / 2);
     }
 
-    // El azar llega de afuera para que los tests puedan decidir el resultado.
+    // nextDouble() da un número al azar entre 0 y 1. Si sale menor que la probabilidad, es crítico.
+    // El azar lo recibo de afuera para que en los tests pueda elegir qué sale.
     public static boolean esCritico(int suerte, RandomGenerator azar) {
         return azar.nextDouble() < probabilidadCritico(suerte);
     }

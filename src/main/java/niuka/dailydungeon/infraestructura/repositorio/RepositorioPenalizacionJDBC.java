@@ -23,7 +23,7 @@ public class RepositorioPenalizacionJDBC implements RepositorioPenalizacion {
     @Override
     public void guardar(Heroe heroe, List<Mision> misionesPenalizadas) {
         try (Connection conexion = conexionBD.obtenerConexion()) {
-            // Misiones y héroe usan la misma conexión: o se guarda todo, o nada.
+            // Igual que en la recompensa: misiones y héroe en una sola transacción.
             conexion.setAutoCommit(false);
             try {
                 marcarPenalizadas(conexion, misionesPenalizadas);

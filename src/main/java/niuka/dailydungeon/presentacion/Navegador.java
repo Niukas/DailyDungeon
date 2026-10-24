@@ -17,7 +17,7 @@ public class Navegador {
     private static final double ALTO = 650;
 
     private final Stage ventana;
-    // Permite que App cree cada controlador pasándole sus servicios por constructor.
+    // Con esto JavaFX le pide los controladores a App, y App los crea con sus servicios.
     private final Callback<Class<?>, Object> fabricaControladores;
 
     public Navegador(Stage ventana, Callback<Class<?>, Object> fabricaControladores) {
@@ -25,6 +25,7 @@ public class Navegador {
         this.fabricaControladores = fabricaControladores;
     }
 
+    // Cambia de pantalla: carga el .fxml, le pone el CSS y lo muestra en la misma ventana.
     public void irA(String vista) {
         Scene escena = new Scene(cargarVista(vista), ANCHO, ALTO);
         escena.getStylesheets().add(Navegador.class.getResource(RUTA_ESTILOS).toExternalForm());

@@ -5,8 +5,8 @@ import niuka.dailydungeon.dominio.modelo.Mision;
 import java.util.ArrayList;
 import java.util.List;
 
-// Guarda y devuelve copias: si el servicio cambia una misión y se olvida de llamar a actualizar,
-// el cambio no queda guardado y el test lo detecta, igual que pasaría con la base real.
+// Guardo copias de las misiones. Así, si el servicio cambia una misión y se olvida
+// de llamar a actualizar, el test se da cuenta (igual que pasaría con la base real).
 public class RepositorioMisionEnMemoria implements RepositorioMision {
 
     private final List<Mision> misiones = new ArrayList<>();

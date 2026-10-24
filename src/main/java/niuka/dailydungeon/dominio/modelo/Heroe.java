@@ -28,6 +28,8 @@ public class Heroe {
         this.atributos = new EnumMap<>(atributos);
     }
 
+    // Así se crea un héroe recién hecho: nivel 1, sin XP, con los atributos
+    // iniciales de su clase y la vida llena.
     public static Heroe nuevo(int idUsuario, String nombre, Clase clase) {
         Map<Atributo, Integer> atributosIniciales = clase.valoresIniciales();
         int vidaInicial = ReglasJuego.vidaMaxima(atributosIniciales.get(Atributo.VITALIDAD));
@@ -40,13 +42,17 @@ public class Heroe {
 
     public void ganarXp(int xpGanada) {
         xp += xpGanada;
+        // Mientras la XP alcance para subir, sube de nivel.
+        // Por eso si gana mucha XP de golpe puede subir varios niveles.
         while (xp >= xpParaSubirDeNivel()) {
             xp -= xpParaSubirDeNivel();
             subirDeNivel();
         }
     }
 
+    // Es privado: la única forma de subir de nivel es ganando XP.
     private void subirDeNivel() {
+        // Cada atributo suma lo que dice su clase (el Guerrero suma más Vitalidad, por ejemplo).
         nivel++;
         for (Atributo atributo : Atributo.values()) {
             atributos.put(atributo, valorDe(atributo) + clase.crecimientosPorNivel().get(atributo));
@@ -54,7 +60,8 @@ public class Heroe {
         hpActual = vidaMaxima();
     }
 
-    // Devuelve true si la vida llegó a 0 y el héroe cayó.
+    // Resta vida sin dejarla negativa. Devuelve true si llegó a 0 y el héroe cayó,
+    // así el servicio sabe qué mensaje mostrar.
     public boolean recibirDanio(int danio) {
         hpActual = Math.max(0, hpActual - danio);
         if (hpActual == 0) {
@@ -64,6 +71,8 @@ public class Heroe {
         return false;
     }
 
+    // Pasa cuando la vida llega a 0. Es lo contrario de subir de nivel: baja un nivel (nunca del 1),
+    // resta lo que habían crecido los atributos (sin bajar del valor inicial) y deja la XP en 0.
     private void caer() {
         if (nivel > ReglasJuego.NIVEL_INICIAL) {
             nivel--;
@@ -73,7 +82,7 @@ public class Heroe {
             }
         }
         xp = 0;
-        // La mitad de la vida máxima nueva, ya calculada con los atributos reducidos.
+        // La vida va al final porque la vida máxima depende de la Vitalidad, que acaba de bajar.
         hpActual = vidaMaxima() / 2;
     }
 

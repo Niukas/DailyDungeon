@@ -9,7 +9,7 @@ import java.util.List;
 public class ServicioTablero {
 
     private static final int LARGO_MAXIMO_NOMBRE = 50;
-    // Ningún tablero guardado tiene id 0: se usa al crear, cuando todavía no hay tablero propio que excluir.
+    // Al crear todavía no hay un tablero propio que saltear. Como ningún tablero tiene id 0, uso este valor.
     private static final int NINGUN_TABLERO = 0;
 
     private final RepositorioTablero repositorioTablero;
@@ -54,6 +54,8 @@ public class ServicioTablero {
         }
     }
 
+    // Revisa si el héroe ya tiene otro tablero con ese nombre (sin importar mayúsculas).
+    // Al renombrar se saltea el mismo tablero, si no daría error contra sí mismo.
     private void validarQueNoSeRepita(int idHeroe, String nombre, int idTableroExcluido) {
         boolean repetido = repositorioTablero.listarPorHeroe(idHeroe).stream()
                 .anyMatch(tablero -> tablero.id() != idTableroExcluido && tablero.nombre().equalsIgnoreCase(nombre));

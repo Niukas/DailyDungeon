@@ -74,13 +74,15 @@ public class App extends Application {
             Alertas.mostrarError(e.getMessage());
             return;
         }
+        // Antes de abrir la ventana me fijo que la base de datos ande.
         if (!conexionBD.hayConexion()) {
             Alertas.mostrarError(MENSAJE_SIN_CONEXION);
             return;
         }
 
         crearDependencias(ventana, conexionBD);
-        // Los errores que no son de negocio (por ejemplo, MySQL se apagó) terminan acá.
+        // Si pasa un error que no es de negocio (por ejemplo, se apagó MySQL),
+        // llega a este manejador y se muestra un mensaje en vez de cerrarse la app.
         Thread.currentThread().setUncaughtExceptionHandler(this::manejarErrorInesperado);
 
         ventana.setTitle(TITULO);
@@ -88,6 +90,9 @@ public class App extends Application {
         ventana.show();
     }
 
+    // Acá se crean todas las piezas de la app y se conectan entre sí.
+    // Primero los repositorios (hablan con la base) y después los servicios (las reglas),
+    // que reciben los repositorios por constructor.
     private void crearDependencias(Stage ventana, ConexionBD conexionBD) {
         RepositorioUsuario repositorioUsuario = new RepositorioUsuarioJDBC(conexionBD);
         HasheadorContrasena hasheador = new HasheadorPBKDF2();
@@ -117,6 +122,8 @@ public class App extends Application {
         navegador = new Navegador(ventana, this::crearControlador);
     }
 
+    // JavaFX llama a este método cada vez que una pantalla necesita su controlador.
+    // Según cuál pida, lo creo pasándole los servicios que usa.
     private Object crearControlador(Class<?> tipo) {
         if (tipo == ControladorInicioSesion.class) {
             return new ControladorInicioSesion(servicioAutenticacion, servicioHeroe, servicioPenalizacion, sesion, navegador);

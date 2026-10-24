@@ -127,7 +127,7 @@ public class RepositorioMisionJDBC implements RepositorioMision {
         }
     }
 
-    // INSERT y UPDATE usan el mismo orden en los primeros 6 parámetros.
+    // El INSERT y el UPDATE cargan los mismos 6 datos en el mismo orden, así que lo escribo una sola vez.
     private void cargarDatos(PreparedStatement sentencia, Mision mision) throws SQLException {
         DatosMision datos = mision.datos();
         sentencia.setInt(1, datos.dificultad().id());
@@ -135,9 +135,12 @@ public class RepositorioMisionJDBC implements RepositorioMision {
         sentencia.setInt(3, mision.estado().id());
         sentencia.setString(4, datos.titulo());
         sentencia.setString(5, datos.descripcion());
+        // setObject con Types.DATE funciona aunque la fecha sea null (misión sin fecha).
         sentencia.setObject(6, datos.fechaLimite(), Types.DATE);
     }
 
+    // Convierte una fila del resultado en un objeto Mision. Los ids de la base
+    // se pasan a los enums con desdeId (por ejemplo, 3 pasa a ser DIFICIL).
     private Mision leerMision(ResultSet resultado) throws SQLException {
         DatosMision datos = new DatosMision(
                 resultado.getString("titulo"),

@@ -30,6 +30,7 @@ public class RepositorioUsuarioJDBC implements RepositorioUsuario {
                 """;
         try (Connection conexion = conexionBD.obtenerConexion();
              PreparedStatement consulta = conexion.prepareStatement(sql)) {
+            // El ? del SQL se reemplaza por el nombre. Así se evita la inyección SQL.
             consulta.setString(1, nombreUsuario);
             try (ResultSet resultado = consulta.executeQuery()) {
                 if (!resultado.next()) {
@@ -48,7 +49,8 @@ public class RepositorioUsuarioJDBC implements RepositorioUsuario {
 
     @Override
     public boolean existeNombre(String nombreUsuario) {
-        // No filtra eliminado: el UNIQUE de nombre_usuario también incluye a los usuarios eliminados.
+        // Acá no filtro eliminado porque en la base el nombre es UNIQUE,
+        // y eso cuenta también a los usuarios eliminados.
         String sql = "SELECT 1 FROM usuario WHERE nombre_usuario = ?";
         try (Connection conexion = conexionBD.obtenerConexion();
              PreparedStatement consulta = conexion.prepareStatement(sql)) {
@@ -70,6 +72,7 @@ public class RepositorioUsuarioJDBC implements RepositorioUsuario {
             insercion.setString(2, usuario.contrasenaHash());
             insercion.setString(3, usuario.contrasenaSal());
             insercion.executeUpdate();
+            // Le pido a MySQL el id que generó solo (AUTO_INCREMENT) para armar el usuario completo.
             try (ResultSet claves = insercion.getGeneratedKeys()) {
                 claves.next();
                 return new Usuario(claves.getInt(1), usuario.nombreUsuario(),

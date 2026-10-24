@@ -22,7 +22,8 @@ public class RepositorioHistorialJDBC implements RepositorioHistorial {
 
     @Override
     public List<Integer> listarXpPorHeroe(int idHeroe) {
-        // No filtra eliminado: la XP ganada cuenta aunque después se haya borrado la misión o su tablero.
+        // Es la única consulta que no filtra eliminado: la XP que ya ganó el héroe
+        // tiene que contar aunque después haya borrado la misión o el tablero.
         String sql = """
                 SELECT h.xp_obtenida
                 FROM historial_mision h

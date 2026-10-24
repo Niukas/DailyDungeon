@@ -26,7 +26,7 @@ public class ServicioPenalizacion {
         this.repositorioPenalizacion = repositorioPenalizacion;
     }
 
-    // Vacío si el usuario no tiene héroe o no hay misiones vencidas.
+    // Se llama al iniciar sesión y al abrir un tablero. Devuelve vacío si no hubo nada que cobrar.
     public Optional<Penalizacion> revisarVencimientos(int idUsuario) {
         Optional<Heroe> encontrado = repositorioHeroe.buscarPorUsuario(idUsuario);
         if (encontrado.isEmpty()) {
@@ -35,6 +35,7 @@ public class ServicioPenalizacion {
         Heroe heroe = encontrado.get();
 
         LocalDate hoy = LocalDate.now();
+        // Traigo todas las misiones del héroe y me quedo solo con las vencidas.
         List<Mision> vencidas = repositorioMision.listarPorHeroe(heroe.id()).stream()
                 .filter(mision -> mision.estaVencida(hoy))
                 .toList();
@@ -45,7 +46,7 @@ public class ServicioPenalizacion {
         int danioTotal = 0;
         boolean cayo = false;
         for (Mision mision : vencidas) {
-            // Se calcula en cada vuelta: si el héroe cae, su Resistencia baja.
+            // El daño lo calculo en cada vuelta porque si el héroe cae, su Resistencia baja.
             int danio = ReglasJuego.danioPorVencimiento(heroe.valorDe(Atributo.RESISTENCIA));
             danioTotal += danio;
             if (heroe.recibirDanio(danio)) {

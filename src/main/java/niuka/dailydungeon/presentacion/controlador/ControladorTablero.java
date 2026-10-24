@@ -28,7 +28,7 @@ public class ControladorTablero {
     private final Sesion sesion;
     private final Navegador navegador;
 
-    // La misión marcada en cualquiera de las tres columnas, o null si no hay ninguna.
+    // Acá guardo la misión que está marcada (en cualquier columna). Es null si no hay ninguna.
     private Mision misionElegida;
 
     @FXML
@@ -78,6 +78,7 @@ public class ControladorTablero {
     }
 
     private void prepararLista(ListView<Mision> lista) {
+        // Le digo a la lista cómo mostrar cada misión (título, dificultad y fecha) en vez del toString.
         lista.setCellFactory(vista -> new ListCell<>() {
             @Override
             protected void updateItem(Mision mision, boolean vacia) {
@@ -85,6 +86,7 @@ public class ControladorTablero {
                 setText(vacia || mision == null ? null : describir(mision));
             }
         });
+        // Este listener se ejecuta cada vez que cambia la misión marcada en esta lista.
         lista.getSelectionModel().selectedItemProperty().addListener((propiedad, anterior, elegida) -> {
             if (elegida != null) {
                 elegir(lista, elegida);
@@ -92,7 +94,8 @@ public class ControladorTablero {
         });
     }
 
-    // Una sola misión elegida a la vez: al marcar una, se desmarcan las otras columnas.
+    // Cuando marcás una misión en una columna, desmarco las otras dos.
+    // Así hay una sola misión elegida y Editar/Eliminar saben cuál es.
     private void elegir(ListView<Mision> listaElegida, Mision mision) {
         for (ListView<Mision> lista : listas()) {
             if (lista != listaElegida) {
@@ -103,6 +106,7 @@ public class ControladorTablero {
         actualizarBotones();
     }
 
+    // Trae las misiones de nuevo y las reparte en las tres columnas. Se llama después de cada cambio.
     private void actualizar() {
         List<Mision> misiones = servicioMision.listarMisiones(sesion.tableroActual().id());
         mostrarEtapa(EstadoMision.TABLON, misiones, etiquetaTablon, listaTablon);
@@ -120,6 +124,7 @@ public class ControladorTablero {
         lista.getItems().setAll(deLaEtapa);
     }
 
+    // Los botones se activan solo si sirven para la misión elegida. Si no, quedan grises.
     private void actualizarBotones() {
         boolean hayElegida = misionElegida != null;
         botonEmpezar.setDisable(!hayElegida || misionElegida.estado() != EstadoMision.TABLON);

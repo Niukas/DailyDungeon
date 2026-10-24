@@ -33,7 +33,8 @@ public class ServicioMision {
     public void editarMision(Mision mision, DatosMision nuevosDatos) {
         DatosMision datosLimpios = limpiar(nuevosDatos);
         validar(datosLimpios);
-        // Solo se valida si cambió: así se puede editar el título de una misión que ya venció.
+        // La fecha solo la valido si la cambiaron. Si no, una misión que ya venció
+        // no se podría editar ni para cambiarle el título.
         if (!Objects.equals(datosLimpios.fechaLimite(), mision.datos().fechaLimite())) {
             validarFechaNoPasada(datosLimpios.fechaLimite());
         }
@@ -55,6 +56,7 @@ public class ServicioMision {
         repositorioMision.eliminar(mision.id());
     }
 
+    // Saca los espacios de más y, si la descripción quedó vacía, la deja en null.
     private DatosMision limpiar(DatosMision datos) {
         String titulo = datos.titulo() == null ? "" : datos.titulo().strip();
         String descripcion = datos.descripcion() == null || datos.descripcion().isBlank()

@@ -39,6 +39,8 @@ public class ControladorInicioSesion {
         try {
             Usuario usuario = servicioAutenticacion.iniciarSesion(campoUsuario.getText(), campoContrasena.getText());
             sesion.iniciar(usuario);
+            // Si ya tiene héroe va a sus tableros (antes se revisan las misiones vencidas).
+            // Si no, primero tiene que crear el héroe.
             if (servicioHeroe.tieneHeroe(usuario.id())) {
                 servicioPenalizacion.revisarVencimientos(usuario.id())
                         .ifPresent(penalizacion -> Alertas.mostrarAviso(penalizacion.mensaje()));

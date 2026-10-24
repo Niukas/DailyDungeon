@@ -48,6 +48,7 @@ public class ControladorFormularioMision {
         comboDificultad.getItems().setAll(Dificultad.values());
         comboPrioridad.getItems().setAll(Prioridad.values());
 
+        // La misma pantalla sirve para crear y para editar. Si Sesion tiene una misión, es editar.
         Optional<Mision> enEdicion = sesion.misionEnEdicion();
         if (enEdicion.isPresent()) {
             etiquetaEncabezado.setText("Editar misión");

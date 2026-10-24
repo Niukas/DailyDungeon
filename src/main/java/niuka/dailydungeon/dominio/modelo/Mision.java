@@ -28,6 +28,8 @@ public class Mision {
         return new Mision(idAsignado, idTablero, datos, estado, penalizada);
     }
 
+    // Cada movimiento entre etapas es un método distinto y cada uno revisa su regla.
+    // Así no hay forma de poner una misión en cualquier etapa.
     public void empezar() {
         if (estado != EstadoMision.TABLON) {
             throw new ExcepcionNegocio("Solo se puede empezar una misión que está en el Tablón.");
@@ -56,6 +58,8 @@ public class Mision {
         datos = nuevosDatos;
     }
 
+    // Está vencida si tiene fecha, la fecha ya pasó, no está en Gloria y todavía
+    // no se cobró (penalizada). Se tienen que cumplir las cuatro cosas.
     public boolean estaVencida(LocalDate hoy) {
         LocalDate fechaLimite = datos.fechaLimite();
         return fechaLimite != null && fechaLimite.isBefore(hoy) && !estaEnGloria() && !penalizada;

@@ -7,7 +7,8 @@ import niuka.dailydungeon.dominio.modelo.Usuario;
 
 import java.util.Optional;
 
-// Recuerda lo que el usuario tiene abierto, para que cada pantalla sepa qué mostrar al cargarse.
+// Acá guardo lo que el usuario tiene abierto (quién es, qué tablero, qué misión edita).
+// Como cada pantalla se carga de cero, lo leen de acá para saber qué mostrar.
 public class Sesion {
 
     private Usuario usuarioActual;

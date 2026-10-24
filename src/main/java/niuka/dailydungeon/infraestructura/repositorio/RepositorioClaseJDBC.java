@@ -28,6 +28,8 @@ public class RepositorioClaseJDBC implements RepositorioClase {
         this.conexionBD = conexionBD;
     }
 
+    // Primero leo los atributos de todas las clases y después las clases.
+    // A cada clase le paso solo las filas que son de ella.
     @Override
     public List<Clase> listarTodas() {
         try (Connection conexion = conexionBD.obtenerConexion()) {

@@ -73,7 +73,8 @@ public class RepositorioTableroJDBC implements RepositorioTablero {
     @Override
     public void eliminar(int idTablero) {
         try (Connection conexion = conexionBD.obtenerConexion()) {
-            // El tablero y sus misiones se eliminan juntos: si falla uno, no se elimina ninguno.
+            // No se borra nada de verdad (borrado lógico): solo se marca eliminado = TRUE.
+            // Va en una transacción para que el tablero y sus misiones se marquen juntos.
             conexion.setAutoCommit(false);
             try {
                 marcarEliminado(conexion, "UPDATE mision SET eliminado = TRUE WHERE id_tablero = ?", idTablero);

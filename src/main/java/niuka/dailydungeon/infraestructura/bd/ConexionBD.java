@@ -18,6 +18,7 @@ public class ConexionBD {
     private final String usuario;
     private final String contrasena;
 
+    // Lee la url, el usuario y la contraseña de la base desde db.properties.
     public ConexionBD() {
         Properties propiedades = leerPropiedades();
         url = propiedades.getProperty("db.url");
@@ -25,10 +26,12 @@ public class ConexionBD {
         contrasena = propiedades.getProperty("db.contrasena", "");
     }
 
+    // Cada vez que un repositorio necesita la base, pide una conexión nueva acá.
     public Connection obtenerConexion() throws SQLException {
         return DriverManager.getConnection(url, usuario, contrasena);
     }
 
+    // Se usa al arrancar la app para saber si MySQL está prendido.
     public boolean hayConexion() {
         try (Connection conexion = obtenerConexion()) {
             return conexion.isValid(SEGUNDOS_ESPERA);

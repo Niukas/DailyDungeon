@@ -18,6 +18,8 @@ public class HasheadorPBKDF2 implements HasheadorContrasena {
 
     private final SecureRandom azar = new SecureRandom();
 
+    // La sal son bytes al azar, distintos para cada usuario. Así dos personas con la
+    // misma contraseña igual tienen hashes distintos.
     @Override
     public String generarSal() {
         byte[] sal = new byte[LARGO_SAL_BYTES];
@@ -33,10 +35,13 @@ public class HasheadorPBKDF2 implements HasheadorContrasena {
     @Override
     public boolean coincide(String contrasena, String sal, String hashGuardado) {
         byte[] hashCalculado = calcularHash(contrasena, sal);
-        // isEqual tarda lo mismo sin importar dónde difieren los bytes, así no da pistas por tiempo.
+        // Comparo con isEqual porque tarda siempre lo mismo, así no se puede adivinar
+        // nada midiendo cuánto tarda la comparación.
         return MessageDigest.isEqual(hashCalculado, Base64.getDecoder().decode(hashGuardado));
     }
 
+    // Acá se calcula el hash. Se repite 65.536 veces a propósito para que sea lento
+    // y a alguien que robe la base le cueste mucho probar contraseñas.
     private byte[] calcularHash(String contrasena, String sal) {
         PBEKeySpec especificacion = new PBEKeySpec(
                 contrasena.toCharArray(), Base64.getDecoder().decode(sal), ITERACIONES, LARGO_HASH_BITS);

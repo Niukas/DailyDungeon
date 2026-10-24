@@ -20,6 +20,8 @@ public class ServicioAutenticacion {
         this.hasheador = hasheador;
     }
 
+    // Pasos del registro: limpiar el nombre, validar todo y recién ahí guardar.
+    // La contraseña nunca se guarda como está: se guarda el hash junto con su sal.
     public Usuario registrar(String nombreUsuario, String contrasena, String confirmacion) {
         String nombre = quitarEspacios(nombreUsuario);
         validarNombre(nombre);
@@ -31,7 +33,8 @@ public class ServicioAutenticacion {
     }
 
     public Usuario iniciarSesion(String nombreUsuario, String contrasena) {
-        // Mismo mensaje para usuario inexistente y contraseña incorrecta: no revela qué usuarios existen.
+        // Uso el mismo mensaje si no existe el usuario o si la contraseña está mal,
+        // así nadie puede averiguar qué usuarios existen.
         Usuario usuario = repositorioUsuario.buscarPorNombre(quitarEspacios(nombreUsuario))
                 .orElseThrow(() -> new ExcepcionNegocio(CREDENCIALES_INCORRECTAS));
         if (contrasena == null || !hasheador.coincide(contrasena, usuario.contrasenaSal(), usuario.contrasenaHash())) {

@@ -23,7 +23,8 @@ public class RepositorioRecompensaJDBC implements RepositorioRecompensa {
     @Override
     public void guardar(Mision mision, Heroe heroe, Recompensa recompensa) {
         try (Connection conexion = conexionBD.obtenerConexion()) {
-            // Los tres cambios usan la misma conexión: o se guardan todos, o ninguno.
+            // Completar una misión cambia 3 tablas. Las hago con la misma conexión y en una
+            // transacción, así se guarda todo junto o no se guarda nada.
             conexion.setAutoCommit(false);
             try {
                 actualizarEstadoMision(conexion, mision);

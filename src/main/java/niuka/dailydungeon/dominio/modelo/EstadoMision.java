@@ -2,7 +2,7 @@ package niuka.dailydungeon.dominio.modelo;
 
 import java.util.Arrays;
 
-// Las etapas están en orden: las flechas de la pantalla del tablero avanzan y retroceden según ese orden.
+// Las tres etapas por las que pasa una misión. El id es el mismo que en la tabla estado_mision.
 public enum EstadoMision {
 
     TABLON(1, "Tablón de misiones"),

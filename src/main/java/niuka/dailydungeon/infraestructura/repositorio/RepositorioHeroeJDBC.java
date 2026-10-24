@@ -42,6 +42,8 @@ public class RepositorioHeroeJDBC implements RepositorioHeroe {
                 if (!resultado.next()) {
                     return Optional.empty();
                 }
+                // El héroe está repartido en varias tablas: acá se junta todo
+                // (sus datos, su clase y sus atributos).
                 int idHeroe = resultado.getInt("id_heroe");
                 return Optional.of(new Heroe(
                         idHeroe,
@@ -75,7 +77,8 @@ public class RepositorioHeroeJDBC implements RepositorioHeroe {
     @Override
     public Heroe guardar(Heroe heroe) {
         try (Connection conexion = conexionBD.obtenerConexion()) {
-            // Héroe y atributos se guardan juntos: si falla uno, no se guarda ninguno.
+            // Uso una transacción: si algo falla en el medio, se deshace todo
+            // y no queda un héroe guardado sin sus atributos.
             conexion.setAutoCommit(false);
             try {
                 int idHeroe = insertarHeroe(conexion, heroe);
@@ -91,7 +94,8 @@ public class RepositorioHeroeJDBC implements RepositorioHeroe {
         }
     }
 
-    // Recibe la conexión de afuera para formar parte de la transacción de quien la llama.
+    // La usan RepositorioRecompensaJDBC y RepositorioPenalizacionJDBC. Recibe la conexión
+    // de afuera para que el cambio del héroe quede dentro de la transacción de ellos.
     static void actualizarHeroe(Connection conexion, Heroe heroe) throws SQLException {
         String sqlHeroe = "UPDATE heroe SET nivel = ?, xp = ?, hp_actual = ? WHERE id_heroe = ?";
         try (PreparedStatement actualizacion = conexion.prepareStatement(sqlHeroe)) {
