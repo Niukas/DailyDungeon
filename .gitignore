@@ -21,3 +21,4 @@ build/
 db.properties
 CLAUDE.md
 .claude/
+docs/guia-del-proyecto.md
