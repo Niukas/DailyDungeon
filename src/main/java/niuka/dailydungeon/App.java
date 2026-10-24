@@ -7,16 +7,19 @@ import niuka.dailydungeon.aplicacion.repositorio.HasheadorContrasena;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioClase;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioHeroe;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioMision;
+import niuka.dailydungeon.aplicacion.repositorio.RepositorioRecompensa;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioTablero;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioUsuario;
 import niuka.dailydungeon.aplicacion.servicio.ServicioAutenticacion;
 import niuka.dailydungeon.aplicacion.servicio.ServicioHeroe;
 import niuka.dailydungeon.aplicacion.servicio.ServicioMision;
+import niuka.dailydungeon.aplicacion.servicio.ServicioRecompensa;
 import niuka.dailydungeon.aplicacion.servicio.ServicioTablero;
 import niuka.dailydungeon.infraestructura.bd.ConexionBD;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioClaseJDBC;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioHeroeJDBC;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioMisionJDBC;
+import niuka.dailydungeon.infraestructura.repositorio.RepositorioRecompensaJDBC;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioTableroJDBC;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioUsuarioJDBC;
 import niuka.dailydungeon.infraestructura.seguridad.HasheadorPBKDF2;
@@ -26,9 +29,12 @@ import niuka.dailydungeon.presentacion.Sesion;
 import niuka.dailydungeon.presentacion.controlador.ControladorCrearHeroe;
 import niuka.dailydungeon.presentacion.controlador.ControladorFormularioMision;
 import niuka.dailydungeon.presentacion.controlador.ControladorInicioSesion;
+import niuka.dailydungeon.presentacion.controlador.ControladorRecompensa;
 import niuka.dailydungeon.presentacion.controlador.ControladorRegistro;
 import niuka.dailydungeon.presentacion.controlador.ControladorTablero;
 import niuka.dailydungeon.presentacion.controlador.ControladorTableros;
+
+import java.util.random.RandomGenerator;
 
 public class App extends Application {
 
@@ -44,6 +50,7 @@ public class App extends Application {
     private ServicioHeroe servicioHeroe;
     private ServicioTablero servicioTablero;
     private ServicioMision servicioMision;
+    private ServicioRecompensa servicioRecompensa;
 
     public static void main(String[] args) {
         launch(args);
@@ -87,6 +94,9 @@ public class App extends Application {
         RepositorioMision repositorioMision = new RepositorioMisionJDBC(conexionBD);
         servicioMision = new ServicioMision(repositorioMision);
 
+        RepositorioRecompensa repositorioRecompensa = new RepositorioRecompensaJDBC(conexionBD);
+        servicioRecompensa = new ServicioRecompensa(repositorioHeroe, repositorioRecompensa, RandomGenerator.getDefault());
+
         sesion = new Sesion();
         navegador = new Navegador(ventana, this::crearControlador);
     }
@@ -105,7 +115,10 @@ public class App extends Application {
             return new ControladorTableros(servicioHeroe, servicioTablero, sesion, navegador);
         }
         if (tipo == ControladorTablero.class) {
-            return new ControladorTablero(servicioMision, sesion, navegador);
+            return new ControladorTablero(servicioMision, servicioRecompensa, sesion, navegador);
+        }
+        if (tipo == ControladorRecompensa.class) {
+            return new ControladorRecompensa(servicioHeroe, sesion, navegador);
         }
         if (tipo == ControladorFormularioMision.class) {
             return new ControladorFormularioMision(servicioMision, sesion, navegador);

@@ -6,10 +6,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import niuka.dailydungeon.aplicacion.servicio.ServicioMision;
+import niuka.dailydungeon.aplicacion.servicio.ServicioRecompensa;
 import niuka.dailydungeon.dominio.ExcepcionNegocio;
 import niuka.dailydungeon.dominio.modelo.DatosMision;
 import niuka.dailydungeon.dominio.modelo.EstadoMision;
 import niuka.dailydungeon.dominio.modelo.Mision;
+import niuka.dailydungeon.dominio.modelo.Recompensa;
 import niuka.dailydungeon.presentacion.Alertas;
 import niuka.dailydungeon.presentacion.Navegador;
 import niuka.dailydungeon.presentacion.Sesion;
@@ -22,6 +24,7 @@ public class ControladorTablero {
     private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private final ServicioMision servicioMision;
+    private final ServicioRecompensa servicioRecompensa;
     private final Sesion sesion;
     private final Navegador navegador;
 
@@ -47,12 +50,16 @@ public class ControladorTablero {
     @FXML
     private Button botonVolverAlTablon;
     @FXML
+    private Button botonCompletar;
+    @FXML
     private Button botonEditar;
     @FXML
     private Button botonEliminar;
 
-    public ControladorTablero(ServicioMision servicioMision, Sesion sesion, Navegador navegador) {
+    public ControladorTablero(ServicioMision servicioMision, ServicioRecompensa servicioRecompensa,
+                              Sesion sesion, Navegador navegador) {
         this.servicioMision = servicioMision;
+        this.servicioRecompensa = servicioRecompensa;
         this.sesion = sesion;
         this.navegador = navegador;
     }
@@ -117,6 +124,7 @@ public class ControladorTablero {
         boolean hayElegida = misionElegida != null;
         botonEmpezar.setDisable(!hayElegida || misionElegida.estado() != EstadoMision.TABLON);
         botonVolverAlTablon.setDisable(!hayElegida || misionElegida.estado() != EstadoMision.EN_AVENTURA);
+        botonCompletar.setDisable(!hayElegida || misionElegida.estado() != EstadoMision.EN_AVENTURA);
         botonEditar.setDisable(!hayElegida || misionElegida.estaEnGloria());
         botonEliminar.setDisable(!hayElegida);
     }
@@ -145,6 +153,17 @@ public class ControladorTablero {
         try {
             servicioMision.volverAlTablon(misionElegida);
             actualizar();
+        } catch (ExcepcionNegocio e) {
+            Alertas.mostrarError(e.getMessage());
+        }
+    }
+
+    @FXML
+    private void completarMision() {
+        try {
+            Recompensa recompensa = servicioRecompensa.completarMision(sesion.usuarioActual().id(), misionElegida);
+            sesion.guardarRecompensa(recompensa);
+            navegador.irA("recompensa");
         } catch (ExcepcionNegocio e) {
             Alertas.mostrarError(e.getMessage());
         }

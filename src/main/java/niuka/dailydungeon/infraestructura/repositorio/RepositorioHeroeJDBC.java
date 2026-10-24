@@ -91,6 +91,27 @@ public class RepositorioHeroeJDBC implements RepositorioHeroe {
         }
     }
 
+    // Recibe la conexión de afuera para formar parte de la transacción de quien la llama.
+    static void actualizarHeroe(Connection conexion, Heroe heroe) throws SQLException {
+        String sqlHeroe = "UPDATE heroe SET nivel = ?, xp = ?, hp_actual = ? WHERE id_heroe = ?";
+        try (PreparedStatement actualizacion = conexion.prepareStatement(sqlHeroe)) {
+            actualizacion.setInt(1, heroe.nivel());
+            actualizacion.setInt(2, heroe.xp());
+            actualizacion.setInt(3, heroe.hpActual());
+            actualizacion.setInt(4, heroe.id());
+            actualizacion.executeUpdate();
+        }
+        String sqlAtributo = "UPDATE heroe_atributo SET valor = ? WHERE id_heroe = ? AND id_atributo = ?";
+        try (PreparedStatement actualizacion = conexion.prepareStatement(sqlAtributo)) {
+            for (Atributo atributo : Atributo.values()) {
+                actualizacion.setInt(1, heroe.valorDe(atributo));
+                actualizacion.setInt(2, heroe.id());
+                actualizacion.setInt(3, atributo.id());
+                actualizacion.executeUpdate();
+            }
+        }
+    }
+
     private int insertarHeroe(Connection conexion, Heroe heroe) throws SQLException {
         String sql = "INSERT INTO heroe (id_usuario, id_clase, nombre, nivel, xp, hp_actual) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement insercion = conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {

@@ -50,6 +50,21 @@ class MisionTest {
     }
 
     @Test
+    void completarPasaDeEnAventuraAGloria() {
+        Mision mision = misionEn(EstadoMision.EN_AVENTURA);
+
+        mision.completar();
+
+        assertEquals(EstadoMision.GLORIA, mision.estado());
+    }
+
+    @Test
+    void soloSePuedeCompletarDesdeEnAventura() {
+        assertThrows(ExcepcionNegocio.class, () -> misionEn(EstadoMision.TABLON).completar());
+        assertThrows(ExcepcionNegocio.class, () -> misionEn(EstadoMision.GLORIA).completar());
+    }
+
+    @Test
     void editarCambiaLosDatos() {
         Mision mision = misionEn(EstadoMision.TABLON);
         DatosMision nuevos = new DatosMision("Rendir final", "Química", null, Dificultad.EPICA, Prioridad.ALTA);

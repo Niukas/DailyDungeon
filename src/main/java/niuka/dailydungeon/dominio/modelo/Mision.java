@@ -38,6 +38,13 @@ public class Mision {
         estado = EstadoMision.TABLON;
     }
 
+    public void completar() {
+        if (estado != EstadoMision.EN_AVENTURA) {
+            throw new ExcepcionNegocio("Solo se puede completar una misión que está en aventura.");
+        }
+        estado = EstadoMision.GLORIA;
+    }
+
     public void editar(DatosMision nuevosDatos) {
         if (estaEnGloria()) {
             throw new ExcepcionNegocio("Una misión en Gloria no se puede editar.");

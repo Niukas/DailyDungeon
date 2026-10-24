@@ -11,9 +11,9 @@ public class Heroe {
     private final int idUsuario;
     private final Clase clase;
     private final String nombre;
-    private final int nivel;
-    private final int xp;
-    private final int hpActual;
+    private int nivel;
+    private int xp;
+    private int hpActual;
     private final Map<Atributo, Integer> atributos;
 
     public Heroe(int id, int idUsuario, Clase clase, String nombre,
@@ -36,6 +36,22 @@ public class Heroe {
 
     public Heroe conId(int idAsignado) {
         return new Heroe(idAsignado, idUsuario, clase, nombre, nivel, xp, hpActual, atributos);
+    }
+
+    public void ganarXp(int xpGanada) {
+        xp += xpGanada;
+        while (xp >= xpParaSubirDeNivel()) {
+            xp -= xpParaSubirDeNivel();
+            subirDeNivel();
+        }
+    }
+
+    private void subirDeNivel() {
+        nivel++;
+        for (Atributo atributo : Atributo.values()) {
+            atributos.put(atributo, valorDe(atributo) + clase.crecimientosPorNivel().get(atributo));
+        }
+        hpActual = vidaMaxima();
     }
 
     public int vidaMaxima() {
