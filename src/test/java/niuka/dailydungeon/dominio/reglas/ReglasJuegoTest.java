@@ -47,6 +47,20 @@ class ReglasJuegoTest {
     }
 
     @Test
+    void danioEsDiezMenosLaMitadDeLaResistencia() {
+        assertEquals(10, ReglasJuego.danioPorVencimiento(0));
+        // 5 / 2 = 2 (división entera) → 10 − 2 = 8
+        assertEquals(8, ReglasJuego.danioPorVencimiento(5));
+        assertEquals(7, ReglasJuego.danioPorVencimiento(7));
+    }
+
+    @Test
+    void danioNuncaEsMenorQueUno() {
+        assertEquals(1, ReglasJuego.danioPorVencimiento(18));
+        assertEquals(1, ReglasJuego.danioPorVencimiento(30));
+    }
+
+    @Test
     void esCriticoCuandoElAzarQuedaPorDebajoDeLaProbabilidad() {
         // Con Suerte 5 la probabilidad es 0,10
         assertTrue(ReglasJuego.esCritico(5, new AzarFijo(0.05)));

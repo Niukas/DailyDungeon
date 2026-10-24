@@ -7,18 +7,21 @@ import niuka.dailydungeon.aplicacion.repositorio.HasheadorContrasena;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioClase;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioHeroe;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioMision;
+import niuka.dailydungeon.aplicacion.repositorio.RepositorioPenalizacion;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioRecompensa;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioTablero;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioUsuario;
 import niuka.dailydungeon.aplicacion.servicio.ServicioAutenticacion;
 import niuka.dailydungeon.aplicacion.servicio.ServicioHeroe;
 import niuka.dailydungeon.aplicacion.servicio.ServicioMision;
+import niuka.dailydungeon.aplicacion.servicio.ServicioPenalizacion;
 import niuka.dailydungeon.aplicacion.servicio.ServicioRecompensa;
 import niuka.dailydungeon.aplicacion.servicio.ServicioTablero;
 import niuka.dailydungeon.infraestructura.bd.ConexionBD;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioClaseJDBC;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioHeroeJDBC;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioMisionJDBC;
+import niuka.dailydungeon.infraestructura.repositorio.RepositorioPenalizacionJDBC;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioRecompensaJDBC;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioTableroJDBC;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioUsuarioJDBC;
@@ -51,6 +54,7 @@ public class App extends Application {
     private ServicioTablero servicioTablero;
     private ServicioMision servicioMision;
     private ServicioRecompensa servicioRecompensa;
+    private ServicioPenalizacion servicioPenalizacion;
 
     public static void main(String[] args) {
         launch(args);
@@ -97,13 +101,16 @@ public class App extends Application {
         RepositorioRecompensa repositorioRecompensa = new RepositorioRecompensaJDBC(conexionBD);
         servicioRecompensa = new ServicioRecompensa(repositorioHeroe, repositorioRecompensa, RandomGenerator.getDefault());
 
+        RepositorioPenalizacion repositorioPenalizacion = new RepositorioPenalizacionJDBC(conexionBD);
+        servicioPenalizacion = new ServicioPenalizacion(repositorioHeroe, repositorioMision, repositorioPenalizacion);
+
         sesion = new Sesion();
         navegador = new Navegador(ventana, this::crearControlador);
     }
 
     private Object crearControlador(Class<?> tipo) {
         if (tipo == ControladorInicioSesion.class) {
-            return new ControladorInicioSesion(servicioAutenticacion, servicioHeroe, sesion, navegador);
+            return new ControladorInicioSesion(servicioAutenticacion, servicioHeroe, servicioPenalizacion, sesion, navegador);
         }
         if (tipo == ControladorRegistro.class) {
             return new ControladorRegistro(servicioAutenticacion, sesion, navegador);
@@ -112,7 +119,7 @@ public class App extends Application {
             return new ControladorCrearHeroe(servicioHeroe, sesion, navegador);
         }
         if (tipo == ControladorTableros.class) {
-            return new ControladorTableros(servicioHeroe, servicioTablero, sesion, navegador);
+            return new ControladorTableros(servicioHeroe, servicioTablero, servicioPenalizacion, sesion, navegador);
         }
         if (tipo == ControladorTablero.class) {
             return new ControladorTablero(servicioMision, servicioRecompensa, sesion, navegador);

@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import niuka.dailydungeon.aplicacion.servicio.ServicioHeroe;
+import niuka.dailydungeon.aplicacion.servicio.ServicioPenalizacion;
 import niuka.dailydungeon.aplicacion.servicio.ServicioTablero;
 import niuka.dailydungeon.dominio.ExcepcionNegocio;
 import niuka.dailydungeon.dominio.modelo.Atributo;
@@ -22,6 +23,7 @@ public class ControladorTableros {
 
     private final ServicioHeroe servicioHeroe;
     private final ServicioTablero servicioTablero;
+    private final ServicioPenalizacion servicioPenalizacion;
     private final Sesion sesion;
     private final Navegador navegador;
 
@@ -43,9 +45,10 @@ public class ControladorTableros {
     private ListView<Tablero> listaTableros;
 
     public ControladorTableros(ServicioHeroe servicioHeroe, ServicioTablero servicioTablero,
-                               Sesion sesion, Navegador navegador) {
+                               ServicioPenalizacion servicioPenalizacion, Sesion sesion, Navegador navegador) {
         this.servicioHeroe = servicioHeroe;
         this.servicioTablero = servicioTablero;
+        this.servicioPenalizacion = servicioPenalizacion;
         this.sesion = sesion;
         this.navegador = navegador;
     }
@@ -80,6 +83,8 @@ public class ControladorTableros {
             return;
         }
         sesion.abrirTablero(elegido);
+        servicioPenalizacion.revisarVencimientos(sesion.usuarioActual().id())
+                .ifPresent(penalizacion -> Alertas.mostrarAviso(penalizacion.mensaje()));
         navegador.irA("tablero");
     }
 

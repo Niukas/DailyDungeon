@@ -32,8 +32,8 @@ public class RepositorioMisionJDBC implements RepositorioMision {
     public List<Mision> listarPorTablero(int idTablero) {
         // Primero prioridad alta, después la fecha más cercana y al final las que no tienen fecha.
         String sql = """
-                SELECT m.id_mision, m.titulo, m.descripcion, m.fecha_limite,
-                       m.id_dificultad, m.id_prioridad, m.id_estado
+                SELECT m.id_mision, m.id_tablero, m.titulo, m.descripcion, m.fecha_limite,
+                       m.id_dificultad, m.id_prioridad, m.id_estado, m.penalizada
                 FROM mision m
                 JOIN prioridad p ON p.id_prioridad = m.id_prioridad
                 WHERE m.id_tablero = ? AND m.eliminado = FALSE
@@ -45,7 +45,31 @@ public class RepositorioMisionJDBC implements RepositorioMision {
             consulta.setInt(1, idTablero);
             try (ResultSet resultado = consulta.executeQuery()) {
                 while (resultado.next()) {
-                    misiones.add(leerMision(resultado, idTablero));
+                    misiones.add(leerMision(resultado));
+                }
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException(ERROR_BD, e);
+        }
+        return misiones;
+    }
+
+    @Override
+    public List<Mision> listarPorHeroe(int idHeroe) {
+        String sql = """
+                SELECT m.id_mision, m.id_tablero, m.titulo, m.descripcion, m.fecha_limite,
+                       m.id_dificultad, m.id_prioridad, m.id_estado, m.penalizada
+                FROM mision m
+                JOIN tablero t ON t.id_tablero = m.id_tablero
+                WHERE t.id_heroe = ? AND t.eliminado = FALSE AND m.eliminado = FALSE
+                """;
+        List<Mision> misiones = new ArrayList<>();
+        try (Connection conexion = conexionBD.obtenerConexion();
+             PreparedStatement consulta = conexion.prepareStatement(sql)) {
+            consulta.setInt(1, idHeroe);
+            try (ResultSet resultado = consulta.executeQuery()) {
+                while (resultado.next()) {
+                    misiones.add(leerMision(resultado));
                 }
             }
         } catch (SQLException e) {
@@ -114,7 +138,7 @@ public class RepositorioMisionJDBC implements RepositorioMision {
         sentencia.setObject(6, datos.fechaLimite(), Types.DATE);
     }
 
-    private Mision leerMision(ResultSet resultado, int idTablero) throws SQLException {
+    private Mision leerMision(ResultSet resultado) throws SQLException {
         DatosMision datos = new DatosMision(
                 resultado.getString("titulo"),
                 resultado.getString("descripcion"),
@@ -123,8 +147,9 @@ public class RepositorioMisionJDBC implements RepositorioMision {
                 Prioridad.desdeId(resultado.getInt("id_prioridad")));
         return new Mision(
                 resultado.getInt("id_mision"),
-                idTablero,
+                resultado.getInt("id_tablero"),
                 datos,
-                EstadoMision.desdeId(resultado.getInt("id_estado")));
+                EstadoMision.desdeId(resultado.getInt("id_estado")),
+                resultado.getBoolean("penalizada"));
     }
 }

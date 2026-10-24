@@ -108,7 +108,7 @@ class ServicioMisionTest {
 
     @Test
     void editarMisionVencidaSinCambiarLaFechaEsValido() {
-        Mision vencida = repositorio.guardar(new Mision(0, ID_TABLERO, datos("Estudiar", AYER), EstadoMision.TABLON));
+        Mision vencida = repositorio.guardar(new Mision(0, ID_TABLERO, datos("Estudiar", AYER), EstadoMision.TABLON, false));
 
         assertDoesNotThrow(() -> servicio.editarMision(vencida, datos("Estudiar mucho", AYER)));
     }

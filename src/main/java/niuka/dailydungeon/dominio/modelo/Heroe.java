@@ -54,6 +54,29 @@ public class Heroe {
         hpActual = vidaMaxima();
     }
 
+    // Devuelve true si la vida llegó a 0 y el héroe cayó.
+    public boolean recibirDanio(int danio) {
+        hpActual = Math.max(0, hpActual - danio);
+        if (hpActual == 0) {
+            caer();
+            return true;
+        }
+        return false;
+    }
+
+    private void caer() {
+        if (nivel > ReglasJuego.NIVEL_INICIAL) {
+            nivel--;
+            for (Atributo atributo : Atributo.values()) {
+                int valorReducido = valorDe(atributo) - clase.crecimientosPorNivel().get(atributo);
+                atributos.put(atributo, Math.max(valorReducido, clase.valoresIniciales().get(atributo)));
+            }
+        }
+        xp = 0;
+        // La mitad de la vida máxima nueva, ya calculada con los atributos reducidos.
+        hpActual = vidaMaxima() / 2;
+    }
+
     public int vidaMaxima() {
         return ReglasJuego.vidaMaxima(valorDe(Atributo.VITALIDAD));
     }

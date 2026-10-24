@@ -20,6 +20,13 @@ public final class Alertas {
         alerta.showAndWait();
     }
 
+    public static void mostrarAviso(String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION, mensaje);
+        alerta.setTitle(TITULO);
+        alerta.setHeaderText(null);
+        alerta.showAndWait();
+    }
+
     public static boolean confirmar(String mensaje) {
         Alert alerta = new Alert(Alert.AlertType.CONFIRMATION, mensaje);
         alerta.setTitle(TITULO);

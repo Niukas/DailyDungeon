@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HeroeTest {
 
@@ -103,5 +105,63 @@ class HeroeTest {
         // Vitalidad 8 → vida máxima 50 + 10 × 8 = 130
         assertEquals(130, herido.vidaMaxima());
         assertEquals(130, herido.hpActual());
+    }
+
+    private Heroe guerrero(int nivel, int xp, int hp, int vitalidad, int sabiduria, int resistencia, int suerte) {
+        Map<Atributo, Integer> atributos = Map.of(Atributo.VITALIDAD, vitalidad, Atributo.SABIDURIA, sabiduria,
+                Atributo.RESISTENCIA, resistencia, Atributo.SUERTE, suerte);
+        return new Heroe(1, 1, ClasesDePrueba.guerrero(), "Arturo", nivel, xp, hp, atributos);
+    }
+
+    @Test
+    void recibirDanioRestaVida() {
+        Heroe heroe = guerreroNuevo();
+
+        boolean cayo = heroe.recibirDanio(30);
+
+        assertFalse(cayo);
+        assertEquals(70, heroe.hpActual());
+    }
+
+    @Test
+    void siLaVidaLlegaACeroPierdeUnNivelYLoQueGanoEnEl() {
+        // Guerrero de nivel 3: cada atributo tiene 5 + 2 × su crecimiento
+        Heroe heroe = guerrero(3, 40, 10, 11, 7, 9, 7);
+
+        boolean cayo = heroe.recibirDanio(10);
+
+        assertTrue(cayo);
+        assertEquals(2, heroe.nivel());
+        assertEquals(8, heroe.valorDe(Atributo.VITALIDAD));
+        assertEquals(6, heroe.valorDe(Atributo.SABIDURIA));
+        assertEquals(7, heroe.valorDe(Atributo.RESISTENCIA));
+        assertEquals(6, heroe.valorDe(Atributo.SUERTE));
+        assertEquals(0, heroe.xp());
+        // Vida máxima con Vitalidad 8 = 130 → la mitad es 65
+        assertEquals(65, heroe.hpActual());
+    }
+
+    @Test
+    void enNivelUnoNoBajaDeNivelNiDeAtributos() {
+        Heroe heroe = guerreroNuevo();
+        heroe.ganarXp(30);
+
+        heroe.recibirDanio(500);
+
+        assertEquals(1, heroe.nivel());
+        assertEquals(5, heroe.valorDe(Atributo.VITALIDAD));
+        assertEquals(0, heroe.xp());
+        assertEquals(50, heroe.hpActual());
+    }
+
+    @Test
+    void losAtributosNoBajanDelValorInicialDeLaClase() {
+        Heroe heroe = guerrero(2, 0, 1, 5, 5, 5, 5);
+
+        heroe.recibirDanio(1);
+
+        for (Atributo atributo : Atributo.values()) {
+            assertEquals(5, heroe.valorDe(atributo));
+        }
     }
 }

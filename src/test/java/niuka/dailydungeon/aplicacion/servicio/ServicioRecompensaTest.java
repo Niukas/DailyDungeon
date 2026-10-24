@@ -44,7 +44,7 @@ class ServicioRecompensaTest {
 
     private Mision misionEn(EstadoMision estado, Dificultad dificultad) {
         DatosMision datos = new DatosMision("Estudiar", null, null, dificultad, Prioridad.MEDIA);
-        return new Mision(1, 1, datos, estado);
+        return new Mision(1, 1, datos, estado, false);
     }
 
     @Test

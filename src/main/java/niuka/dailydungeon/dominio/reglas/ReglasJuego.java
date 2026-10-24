@@ -12,6 +12,8 @@ public final class ReglasJuego {
     public static final double CRITICO_POR_SUERTE = 0.02;
     public static final double CRITICO_MAXIMO = 0.50;
     public static final double MULTIPLICADOR_CRITICO = 1.5;
+    public static final int DANIO_BASE = 10;
+    public static final int DANIO_MINIMO = 1;
 
     private ReglasJuego() {
     }
@@ -35,6 +37,11 @@ public final class ReglasJuego {
 
     public static double probabilidadCritico(int suerte) {
         return Math.min(CRITICO_POR_SUERTE * suerte, CRITICO_MAXIMO);
+    }
+
+    // División entera: con Resistencia 5, 5 / 2 = 2 y el daño es 8.
+    public static int danioPorVencimiento(int resistencia) {
+        return Math.max(DANIO_MINIMO, DANIO_BASE - resistencia / 2);
     }
 
     // El azar llega de afuera para que los tests puedan decidir el resultado.

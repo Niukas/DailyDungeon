@@ -20,6 +20,14 @@ public class RepositorioMisionEnMemoria implements RepositorioMision {
                 .toList();
     }
 
+    // En los tests hay un solo héroe, así que devuelve todas las misiones.
+    @Override
+    public List<Mision> listarPorHeroe(int idHeroe) {
+        return misiones.stream()
+                .map(mision -> mision.conId(mision.id()))
+                .toList();
+    }
+
     @Override
     public Mision guardar(Mision mision) {
         ultimoId++;
