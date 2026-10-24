@@ -1,0 +1,67 @@
+package niuka.dailydungeon.dominio.modelo;
+
+import niuka.dailydungeon.dominio.ExcepcionNegocio;
+
+public class Mision {
+
+    private final int id;
+    private final int idTablero;
+    private DatosMision datos;
+    private EstadoMision estado;
+
+    public Mision(int id, int idTablero, DatosMision datos, EstadoMision estado) {
+        this.id = id;
+        this.idTablero = idTablero;
+        this.datos = datos;
+        this.estado = estado;
+    }
+
+    public static Mision nueva(int idTablero, DatosMision datos) {
+        return new Mision(0, idTablero, datos, EstadoMision.TABLON);
+    }
+
+    public Mision conId(int idAsignado) {
+        return new Mision(idAsignado, idTablero, datos, estado);
+    }
+
+    public void empezar() {
+        if (estado != EstadoMision.TABLON) {
+            throw new ExcepcionNegocio("Solo se puede empezar una misión que está en el Tablón.");
+        }
+        estado = EstadoMision.EN_AVENTURA;
+    }
+
+    public void volverAlTablon() {
+        if (estado != EstadoMision.EN_AVENTURA) {
+            throw new ExcepcionNegocio("Solo una misión en aventura puede volver al Tablón.");
+        }
+        estado = EstadoMision.TABLON;
+    }
+
+    public void editar(DatosMision nuevosDatos) {
+        if (estaEnGloria()) {
+            throw new ExcepcionNegocio("Una misión en Gloria no se puede editar.");
+        }
+        datos = nuevosDatos;
+    }
+
+    public boolean estaEnGloria() {
+        return estado == EstadoMision.GLORIA;
+    }
+
+    public int id() {
+        return id;
+    }
+
+    public int idTablero() {
+        return idTablero;
+    }
+
+    public DatosMision datos() {
+        return datos;
+    }
+
+    public EstadoMision estado() {
+        return estado;
+    }
+}

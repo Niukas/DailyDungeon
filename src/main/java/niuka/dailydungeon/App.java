@@ -6,14 +6,17 @@ import javafx.stage.Stage;
 import niuka.dailydungeon.aplicacion.repositorio.HasheadorContrasena;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioClase;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioHeroe;
+import niuka.dailydungeon.aplicacion.repositorio.RepositorioMision;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioTablero;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioUsuario;
 import niuka.dailydungeon.aplicacion.servicio.ServicioAutenticacion;
 import niuka.dailydungeon.aplicacion.servicio.ServicioHeroe;
+import niuka.dailydungeon.aplicacion.servicio.ServicioMision;
 import niuka.dailydungeon.aplicacion.servicio.ServicioTablero;
 import niuka.dailydungeon.infraestructura.bd.ConexionBD;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioClaseJDBC;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioHeroeJDBC;
+import niuka.dailydungeon.infraestructura.repositorio.RepositorioMisionJDBC;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioTableroJDBC;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioUsuarioJDBC;
 import niuka.dailydungeon.infraestructura.seguridad.HasheadorPBKDF2;
@@ -21,8 +24,10 @@ import niuka.dailydungeon.presentacion.Alertas;
 import niuka.dailydungeon.presentacion.Navegador;
 import niuka.dailydungeon.presentacion.Sesion;
 import niuka.dailydungeon.presentacion.controlador.ControladorCrearHeroe;
+import niuka.dailydungeon.presentacion.controlador.ControladorFormularioMision;
 import niuka.dailydungeon.presentacion.controlador.ControladorInicioSesion;
 import niuka.dailydungeon.presentacion.controlador.ControladorRegistro;
+import niuka.dailydungeon.presentacion.controlador.ControladorTablero;
 import niuka.dailydungeon.presentacion.controlador.ControladorTableros;
 
 public class App extends Application {
@@ -38,6 +43,7 @@ public class App extends Application {
     private ServicioAutenticacion servicioAutenticacion;
     private ServicioHeroe servicioHeroe;
     private ServicioTablero servicioTablero;
+    private ServicioMision servicioMision;
 
     public static void main(String[] args) {
         launch(args);
@@ -78,6 +84,9 @@ public class App extends Application {
         RepositorioTablero repositorioTablero = new RepositorioTableroJDBC(conexionBD);
         servicioTablero = new ServicioTablero(repositorioTablero);
 
+        RepositorioMision repositorioMision = new RepositorioMisionJDBC(conexionBD);
+        servicioMision = new ServicioMision(repositorioMision);
+
         sesion = new Sesion();
         navegador = new Navegador(ventana, this::crearControlador);
     }
@@ -94,6 +103,12 @@ public class App extends Application {
         }
         if (tipo == ControladorTableros.class) {
             return new ControladorTableros(servicioHeroe, servicioTablero, sesion, navegador);
+        }
+        if (tipo == ControladorTablero.class) {
+            return new ControladorTablero(servicioMision, sesion, navegador);
+        }
+        if (tipo == ControladorFormularioMision.class) {
+            return new ControladorFormularioMision(servicioMision, sesion, navegador);
         }
         throw new IllegalArgumentException("No hay un controlador registrado para " + tipo.getName());
     }

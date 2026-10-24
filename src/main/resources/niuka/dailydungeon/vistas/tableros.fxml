@@ -28,6 +28,7 @@
             <Label text="Tus tableros" styleClass="titulo"/>
             <ListView fx:id="listaTableros" VBox.vgrow="ALWAYS"/>
             <HBox spacing="8.0">
+                <Button text="Abrir" onAction="#abrirTablero"/>
                 <Button text="Nuevo" onAction="#crearTablero"/>
                 <Button text="Renombrar" onAction="#renombrarTablero"/>
                 <Button text="Eliminar" onAction="#eliminarTablero"/>

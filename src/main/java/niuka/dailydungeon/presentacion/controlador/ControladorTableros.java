@@ -73,6 +73,17 @@ public class ControladorTableros {
     }
 
     @FXML
+    private void abrirTablero() {
+        Tablero elegido = listaTableros.getSelectionModel().getSelectedItem();
+        if (elegido == null) {
+            Alertas.mostrarError(ELEGI_UN_TABLERO);
+            return;
+        }
+        sesion.abrirTablero(elegido);
+        navegador.irA("tablero");
+    }
+
+    @FXML
     private void crearTablero() {
         Optional<String> nombre = Alertas.pedirTexto("Nombre del tablero:", "");
         if (nombre.isEmpty()) {
