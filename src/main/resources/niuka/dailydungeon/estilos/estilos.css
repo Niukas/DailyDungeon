@@ -1,0 +1,9 @@
+.root {
+    -fx-font-size: 14px;
+    -fx-padding: 20;
+}
+
+.titulo {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}

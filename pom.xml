@@ -26,6 +26,11 @@
       <artifactId>javafx-fxml</artifactId>
       <version>21.0.6</version>
     </dependency>
+    <dependency>
+      <groupId>com.mysql</groupId>
+      <artifactId>mysql-connector-j</artifactId>
+      <version>9.1.0</version>
+    </dependency>
 
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -59,7 +64,7 @@
           <execution>
             <id>default-cli</id>
             <configuration>
-              <mainClass>niuka.dailydungeon/niuka.dailydungeon.HelloApplication</mainClass>
+              <mainClass>niuka.dailydungeon/niuka.dailydungeon.App</mainClass>
               <launcher>app</launcher>
               <jlinkZipName>app</jlinkZipName>
               <jlinkImageName>app</jlinkImageName>
