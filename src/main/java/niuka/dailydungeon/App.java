@@ -4,14 +4,20 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import niuka.dailydungeon.aplicacion.repositorio.HasheadorContrasena;
+import niuka.dailydungeon.aplicacion.repositorio.RepositorioClase;
+import niuka.dailydungeon.aplicacion.repositorio.RepositorioHeroe;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioUsuario;
 import niuka.dailydungeon.aplicacion.servicio.ServicioAutenticacion;
+import niuka.dailydungeon.aplicacion.servicio.ServicioHeroe;
 import niuka.dailydungeon.infraestructura.bd.ConexionBD;
+import niuka.dailydungeon.infraestructura.repositorio.RepositorioClaseJDBC;
+import niuka.dailydungeon.infraestructura.repositorio.RepositorioHeroeJDBC;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioUsuarioJDBC;
 import niuka.dailydungeon.infraestructura.seguridad.HasheadorPBKDF2;
 import niuka.dailydungeon.presentacion.Alertas;
 import niuka.dailydungeon.presentacion.Navegador;
 import niuka.dailydungeon.presentacion.Sesion;
+import niuka.dailydungeon.presentacion.controlador.ControladorCrearHeroe;
 import niuka.dailydungeon.presentacion.controlador.ControladorInicioSesion;
 import niuka.dailydungeon.presentacion.controlador.ControladorRegistro;
 
@@ -26,6 +32,7 @@ public class App extends Application {
     private Navegador navegador;
     private Sesion sesion;
     private ServicioAutenticacion servicioAutenticacion;
+    private ServicioHeroe servicioHeroe;
 
     public static void main(String[] args) {
         launch(args);
@@ -58,16 +65,24 @@ public class App extends Application {
         RepositorioUsuario repositorioUsuario = new RepositorioUsuarioJDBC(conexionBD);
         HasheadorContrasena hasheador = new HasheadorPBKDF2();
         servicioAutenticacion = new ServicioAutenticacion(repositorioUsuario, hasheador);
+
+        RepositorioHeroe repositorioHeroe = new RepositorioHeroeJDBC(conexionBD);
+        RepositorioClase repositorioClase = new RepositorioClaseJDBC(conexionBD);
+        servicioHeroe = new ServicioHeroe(repositorioHeroe, repositorioClase);
+
         sesion = new Sesion();
         navegador = new Navegador(ventana, this::crearControlador);
     }
 
     private Object crearControlador(Class<?> tipo) {
         if (tipo == ControladorInicioSesion.class) {
-            return new ControladorInicioSesion(servicioAutenticacion, sesion, navegador);
+            return new ControladorInicioSesion(servicioAutenticacion, servicioHeroe, sesion, navegador);
         }
         if (tipo == ControladorRegistro.class) {
             return new ControladorRegistro(servicioAutenticacion, sesion, navegador);
+        }
+        if (tipo == ControladorCrearHeroe.class) {
+            return new ControladorCrearHeroe(servicioHeroe, sesion, navegador);
         }
         throw new IllegalArgumentException("No hay un controlador registrado para " + tipo.getName());
     }

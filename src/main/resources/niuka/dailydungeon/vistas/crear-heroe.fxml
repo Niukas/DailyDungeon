@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" spacing="10.0" xmlns:fx="http://javafx.com/fxml">
-    <Label text="Crear héroe" styleClass="titulo"/>
-    <Label text="Próximamente."/>
+<VBox alignment="CENTER" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="niuka.dailydungeon.presentacion.controlador.ControladorCrearHeroe">
+    <VBox styleClass="formulario" spacing="8.0" maxWidth="300.0">
+        <Label text="Crear héroe" styleClass="titulo"/>
+        <Label text="Nombre (de 3 a 30 caracteres)"/>
+        <TextField fx:id="campoNombre"/>
+        <Label text="Clase"/>
+        <ComboBox fx:id="comboClase" promptText="Elegí una clase" maxWidth="Infinity"
+                  onAction="#mostrarDescripcion"/>
+        <Label fx:id="etiquetaDescripcion" wrapText="true"/>
+        <Button text="Crear héroe" defaultButton="true" maxWidth="Infinity" onAction="#crearHeroe"/>
+    </VBox>
 </VBox>
