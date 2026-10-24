@@ -6,12 +6,14 @@ import javafx.stage.Stage;
 import niuka.dailydungeon.aplicacion.repositorio.HasheadorContrasena;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioClase;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioHeroe;
+import niuka.dailydungeon.aplicacion.repositorio.RepositorioHistorial;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioMision;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioPenalizacion;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioRecompensa;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioTablero;
 import niuka.dailydungeon.aplicacion.repositorio.RepositorioUsuario;
 import niuka.dailydungeon.aplicacion.servicio.ServicioAutenticacion;
+import niuka.dailydungeon.aplicacion.servicio.ServicioEstadisticas;
 import niuka.dailydungeon.aplicacion.servicio.ServicioHeroe;
 import niuka.dailydungeon.aplicacion.servicio.ServicioMision;
 import niuka.dailydungeon.aplicacion.servicio.ServicioPenalizacion;
@@ -20,6 +22,7 @@ import niuka.dailydungeon.aplicacion.servicio.ServicioTablero;
 import niuka.dailydungeon.infraestructura.bd.ConexionBD;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioClaseJDBC;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioHeroeJDBC;
+import niuka.dailydungeon.infraestructura.repositorio.RepositorioHistorialJDBC;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioMisionJDBC;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioPenalizacionJDBC;
 import niuka.dailydungeon.infraestructura.repositorio.RepositorioRecompensaJDBC;
@@ -30,6 +33,7 @@ import niuka.dailydungeon.presentacion.Alertas;
 import niuka.dailydungeon.presentacion.Navegador;
 import niuka.dailydungeon.presentacion.Sesion;
 import niuka.dailydungeon.presentacion.controlador.ControladorCrearHeroe;
+import niuka.dailydungeon.presentacion.controlador.ControladorEstadisticas;
 import niuka.dailydungeon.presentacion.controlador.ControladorFormularioMision;
 import niuka.dailydungeon.presentacion.controlador.ControladorInicioSesion;
 import niuka.dailydungeon.presentacion.controlador.ControladorRecompensa;
@@ -55,6 +59,7 @@ public class App extends Application {
     private ServicioMision servicioMision;
     private ServicioRecompensa servicioRecompensa;
     private ServicioPenalizacion servicioPenalizacion;
+    private ServicioEstadisticas servicioEstadisticas;
 
     public static void main(String[] args) {
         launch(args);
@@ -104,6 +109,10 @@ public class App extends Application {
         RepositorioPenalizacion repositorioPenalizacion = new RepositorioPenalizacionJDBC(conexionBD);
         servicioPenalizacion = new ServicioPenalizacion(repositorioHeroe, repositorioMision, repositorioPenalizacion);
 
+        RepositorioHistorial repositorioHistorial = new RepositorioHistorialJDBC(conexionBD);
+        servicioEstadisticas = new ServicioEstadisticas(
+                repositorioHeroe, repositorioHistorial, repositorioTablero, repositorioMision);
+
         sesion = new Sesion();
         navegador = new Navegador(ventana, this::crearControlador);
     }
@@ -123,6 +132,9 @@ public class App extends Application {
         }
         if (tipo == ControladorTablero.class) {
             return new ControladorTablero(servicioMision, servicioRecompensa, sesion, navegador);
+        }
+        if (tipo == ControladorEstadisticas.class) {
+            return new ControladorEstadisticas(servicioEstadisticas, sesion, navegador);
         }
         if (tipo == ControladorRecompensa.class) {
             return new ControladorRecompensa(servicioHeroe, sesion, navegador);

@@ -20,7 +20,8 @@
             <Label text="Atributos" styleClass="subtitulo"/>
             <VBox fx:id="cajaAtributos" spacing="4.0"/>
             <Region VBox.vgrow="ALWAYS"/>
-            <Button text="Cerrar sesión" onAction="#cerrarSesion"/>
+            <Button text="Estadísticas" maxWidth="Infinity" onAction="#verEstadisticas"/>
+            <Button text="Cerrar sesión" maxWidth="Infinity" onAction="#cerrarSesion"/>
         </VBox>
     </left>
     <center>

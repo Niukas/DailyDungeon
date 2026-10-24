@@ -137,6 +137,11 @@ public class ControladorTableros {
     }
 
     @FXML
+    private void verEstadisticas() {
+        navegador.irA("estadisticas");
+    }
+
+    @FXML
     private void cerrarSesion() {
         sesion.cerrar();
         navegador.irA("inicio-sesion");

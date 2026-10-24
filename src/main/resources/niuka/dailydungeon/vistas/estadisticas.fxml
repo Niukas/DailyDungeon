@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="10.0" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="niuka.dailydungeon.presentacion.controlador.ControladorEstadisticas">
+    <HBox spacing="10.0" alignment="CENTER_LEFT">
+        <Button text="← Tableros" onAction="#volverATableros"/>
+        <Label text="Estadísticas" styleClass="titulo"/>
+    </HBox>
+    <Label fx:id="etiquetaCompletadas" styleClass="etapa"/>
+    <Label fx:id="etiquetaXpTotal" styleClass="etapa"/>
+    <Label text="Progreso por tablero" styleClass="subtitulo"/>
+    <VBox fx:id="cajaProgreso" spacing="6.0"/>
+</VBox>
